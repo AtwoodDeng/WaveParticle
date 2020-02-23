@@ -1,0 +1,59 @@
+﻿// Each #kernel tells which function to compile; you can have many kernels
+#pragma kernel CSMain
+
+struct ParticleInfo
+{
+    float3 pos;
+    float radius;
+    float height;
+    float dxdz;
+};
+
+// Create a RenderTexture with enableRandomWrite flag and set it
+// with cs.SetTexture
+RWTexture2D<float4> Result;
+RWStructuredBuffer<ParticleInfo> ParticleInfos;
+
+int _Resolution;
+int _ParticleCount;
+float4 _Range;
+
+#include "UnityCG.cginc"
+#include "WaveLib.cginc"
+
+float3 IDtoPos(uint3 id )
+{
+    return float3( id.x * 1.0 / _Resolution * _Range.x * 2.0 - _Range.x , 0 ,
+    id.y * 1.0 / _Resolution * _Range.y * 2.0 - _Range.y);
+}
+
+[numthreads(8,8,1)]
+void CSMain (uint3 id : SV_DispatchThreadID)
+{
+    float3 vertexPos = IDtoPos(id);
+    
+    float height = 0;
+    float2 offsetXZ = 0;
+
+    for( int i = 0 ; i < _ParticleCount; ++ i )
+    {
+         float3 ppos = ParticleInfos[i].pos;
+         float radius = ParticleInfos[i].radius;
+         float heightAmplitude = ParticleInfos[i].height;
+         float dxdz = ParticleInfos[i].dxdz;
+
+         float h;
+         float2 off;
+         GetWaveOffset( vertexPos , ppos , _Range , radius , heightAmplitude , dxdz , h , off );
+           
+         height += h;
+         offsetXZ += off;
+    }
+
+  
+    Result[id.xy] = float4( height , offsetXZ.x , offsetXZ.y , 0 );
+
+    // TODO: insert actual code here!
+
+//    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+}
