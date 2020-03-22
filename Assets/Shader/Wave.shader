@@ -28,6 +28,15 @@
         _SSSIntensity("SSS Intensity", float) = 1
         _SSSColor("SSS Color", color) = (1.0,1.0,1.0,1.0)
 
+        [Header(Detail)] 
+        _DetailNormal("Detail Normal", 2D) = "white" {}
+        _FlowMap("Flow Map", 2D) = "white" {}
+        _DetailNormalIntensity("Detail Normal Intensity", range(0,2)) = 1.0
+        _DetailFlowmapTiling("Detail Normal Tiling", float) = 1.0
+        _DetailFlowmapOffset("Detail Normal Offset", float) = 0.0
+        _DetailFlowmapSpeed("Detail Normal Speed", float) = 1.0
+        _DetailFlowmapJump("Detail Normal Jump", vector) = (0.25,0.25,0,0)
+
         [Toggle]_IsEdge("Is Edge" , float )=0
 
     }
@@ -63,8 +72,8 @@
             {
                 float2 texcoord:TEXCOORD0;
                 float4 vertex : SV_POSITION;
-                float4 tangent : TANGENT;
-                float3 normal : NORMAL;
+                float4 tangentWS : TANGENT;
+                float3 normalWS : NORMAL;
                 float3 objPos : TEXCOORD1;
                 float3 worldPos : TEXCOORD2;
                 float3 view : TEXCOORD3;
@@ -97,9 +106,11 @@
                 o.vertex = UnityObjectToClipPos(v.vertex);
                 o.objPos = v.vertex.xyz;
                 o.texcoord = TRANSFORM_TEX(v.texcoord, _HeightMap);
-                o.normal = mul(unity_ObjectToWorld, v.normal);
+                //o.normalWS = mul(unity_ObjectToWorld, v.normal);
+                o.normalWS = v.normal;
                 o.worldPos = mul(unity_ObjectToWorld , v.vertex);
                 o.view = normalize(_WorldSpaceCameraPos - o.worldPos);
+                o.tangentWS = mul(unity_ObjectToWorld,v.tangent);
 
                 return o;
             }
@@ -134,9 +145,10 @@
               InternalTessInterp_appdata v;
 
               v.vertex = vi[0].vertex*bary.x + vi[1].vertex*bary.y + vi[2].vertex*bary.z;
-              
-              float4 offset = tex2Dlod(_HeightMap,float4(objPosToMapUV(v.vertex),0,0));
-              float4 normal = tex2Dlod(_NormalMap,float4(objPosToMapUV(v.vertex),0,0));
+
+              float2 uv = objPosToMapUV(v.vertex);
+              float4 offset = tex2Dlod(_HeightMap,float4(uv,0,0));
+              float4 normal = tex2Dlod(_NormalMap,float4(uv,0,0));
 
               offset.xyz = (_IsEdge > 0 && v.vertex.y < 0 ) ? float3(-0.5,0,0) : offset.xyz;
               v.vertex.xz += offset.yz;
@@ -145,7 +157,15 @@
               v.tangent = vi[0].tangent*bary.x + vi[1].tangent*bary.y + vi[2].tangent*bary.z;
               
               v.normal = normal;
+
+              normal.xyz = float3(0,1,0);
+              float3 detailNormal = DetailNormal(uv,normal,v.tangent) * _DetailNormalIntensity;
+              detailNormal = (_IsEdge > 0 && v.vertex.y < 0 ) ? float3(0,0,0) : detailNormal;
+              v.normal = normalize(v.normal + detailNormal );
+              v.vertex.xyz += detailNormal * 0.1; 
+
               v.texcoord = vi[0].texcoord*bary.x + vi[1].texcoord*bary.y + vi[2].texcoord*bary.z;
+              
 
               v2f o = vert (v);
               return o;
@@ -156,12 +176,12 @@
             {
                 LightingData data;
                 data.view = i.view;
-                data.normal = i.normal;
+                data.normal = i.normalWS;
                 data.worldPos = i.worldPos;
                 data.objPos = i.objPos;
                 data.lightDir = _WorldSpaceLightPos0.xyz;
 
-                
+
                 data.F0 = float3(1,1,1) * IORtoF0(1.0,_IOR); 
                 data.albedo = _Albedo;
                 data.metalness = 0; 

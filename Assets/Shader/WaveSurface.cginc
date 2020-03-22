@@ -62,6 +62,8 @@ void GetWaveOffset( float3 vertexPos , float3 ppos , float4 range, float radius 
     xzOffset = heightAmplitude * wave_xz_func(x) / radius * dir * hozOffset;
 }
 
+
+
 //float3 GetSingleParticlePosition()
 //{
 //    return RepeatPosition( float3( _Time.y * _Speed , 0 , 0 ) , _Range); 

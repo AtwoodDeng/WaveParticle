@@ -31,6 +31,10 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _DetailNormal:
+        m_Texture: {fileID: 2800000, guid: b7afd81f19cf9f54aa05f69827ffdb6c, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -38,6 +42,10 @@ Material:
     - _EmissionMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FlowMap:
+        m_Texture: {fileID: 2800000, guid: d8c3ac8982c34074d83e0dffcac1afbc, type: 3}
+        m_Scale: {x: 4, y: 4}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
         m_Texture: {fileID: 0}
@@ -70,6 +78,11 @@ Material:
     - _AmbientTop: 9.5
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _DetailFlowmapOffset: 0
+    - _DetailFlowmapSpeed: 1
+    - _DetailFlowmapTiling: 1
+    - _DetailFlowmapTilling: 1
+    - _DetailNormalIntensity: 0.5
     - _DetailNormalMapScale: 1
     - _DirSpecIntensity: 12
     - _DstBlend: 0
@@ -97,7 +110,7 @@ Material:
     - _SrcBlend: 1
     - _SubSurfaceSunDistort: 0.216
     - _SubSurfaceSunFallOff: 2.08
-    - _TessFactor: 110
+    - _TessFactor: 25
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
@@ -105,6 +118,7 @@ Material:
     - _AmbientOceanLight: {r: 0, g: 0.43256062, b: 0.6313726, a: 1}
     - _AmbientSkyLight: {r: 0, g: 0.9226115, b: 1, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _DetailFlowmapJump: {r: 0.25, g: 0.25, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _Range: {r: 5, g: 5, b: 0.2, a: 0.2}
     - _SSSColor: {r: 0, g: 0.96346474, b: 1, a: 1}

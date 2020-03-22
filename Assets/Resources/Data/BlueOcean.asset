@@ -14,14 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   range: 5
   dirSpeed: 1
-  texResolution: 512
+  texResolution: 1024
   packets:
   - particleCount: 100
     noiseSpeed: 3
     speedRandom: 0.265
     radius: 1
     radiusRandom: 0
-    height: 0.05
+    height: 0.04
     heightRandom: 0.258
     dxdz: 2
     dxdzRandom: 0.369
@@ -30,9 +30,9 @@ MonoBehaviour:
     speedRandom: 1
     radius: 2
     radiusRandom: 0.423
-    height: 0.08
+    height: 0.06
     heightRandom: 0
-    dxdz: 2
+    dxdz: 0.66
     dxdzRandom: 0.33
   - particleCount: 12
     noiseSpeed: 1

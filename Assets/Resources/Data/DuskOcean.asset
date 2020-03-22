@@ -1,0 +1,50 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!114 &11400000
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 0}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: a727e55ac39692c4d9ba33925b1c7905, type: 3}
+  m_Name: DuskOcean
+  m_EditorClassIdentifier: 
+  range: 5
+  dirSpeed: 0.66
+  texResolution: 1024
+  packets:
+  - particleCount: 400
+    noiseSpeed: 0.3
+    speedRandom: 1
+    radius: 0.45
+    radiusRandom: 0.258
+    height: 0.015
+    heightRandom: 0.788
+    dxdz: 0.39
+    dxdzRandom: 0.369
+  - particleCount: 80
+    noiseSpeed: 0.33
+    speedRandom: 0.767
+    radius: 1.2
+    radiusRandom: 0.4
+    height: 0.05
+    heightRandom: 0.4
+    dxdz: 1
+    dxdzRandom: 0.33
+  - particleCount: 12
+    noiseSpeed: 0.15
+    speedRandom: 0
+    radius: 3
+    radiusRandom: 0
+    height: 0.05
+    heightRandom: 0.3
+    dxdz: 0
+    dxdzRandom: 0
+  infectRadiusFalloff: 1
+  infectDistanceFalloff: 1
+  skybox: {fileID: 8900000, guid: 22f0efbf93ea81b49bce3ac5f1488041, type: 3}
+  waveMaterial: {fileID: 2100000, guid: c3e0d64968e97d845a8e0989c205e22d, type: 2}
+  edgeMaterial: {fileID: 2100000, guid: 6742aa8ca6c0d2445a4e84ec2186db02, type: 2}

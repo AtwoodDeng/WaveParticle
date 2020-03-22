@@ -70,6 +70,11 @@ half3 CetoDirectionalLightSpecular(half3 V, half3 N, half3 L , float roughness)
 
 }
 
+float3 BRDFCetoDirectionalLightSpecular(LightingData data)
+{
+	return CetoDirectionalLightSpecular(data.view,data.normal,data.lightDir,data.roughness);
+}
+
 
 float3 BRDFDirectionalSpecular(LightingData data )
 {

@@ -8,9 +8,13 @@
 sampler2D _HeightMap;
 float4 _HeightMap_ST;
 sampler2D _NormalMap;
-float4 _NormalMap_ST;
+//float4 _NormalMap_ST;
 sampler2D _ToolMap;
-float4 _ToolMap_ST;
+//float4 _ToolMap_ST;
+sampler2D _DetailNormal;
+float4 _DetailNormal_ST;
+sampler2D _FlowMap;
+float4 _FlowMap_ST;
 
 float _TessFactor;
 float4 _Albedo;
@@ -22,8 +26,10 @@ float _DirSpecIntensity;
 float _SkySpecularIntensity;
 float _AmbientIntensity;
 float _SSSIntensity;
-float4 _Range;
+float _DetailNormalIntensity;
 
+
+float4 _Range;
 
 struct LightingData
 {
@@ -57,3 +63,4 @@ float2 objPosToMapUV(float3 objPos)
 #include "WaveReflection.cginc"
 #include "WaveAmbient.cginc"
 #include "WaveSSS.cginc"
+#include "WaveDetail.cginc"

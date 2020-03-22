@@ -26,7 +26,7 @@ RenderSettings:
   m_AmbientIntensity: 1
   m_AmbientMode: 0
   m_SubtractiveShadowColor: {r: 0.42, g: 0.478, b: 0.627, a: 1}
-  m_SkyboxMaterial: {fileID: 10304, guid: 0000000000000000f000000000000000, type: 0}
+  m_SkyboxMaterial: {fileID: 2100000, guid: e0c5fc40ce9226e44a3b4cd916fafb8a, type: 2}
   m_HaloStrength: 0.5
   m_FlareStrength: 1
   m_FlareFadeSpeed: 3
@@ -1010,7 +1010,7 @@ Light:
   serializedVersion: 10
   m_Type: 1
   m_Shape: 0
-  m_Color: {r: 1, g: 0.95686275, b: 0.8392157, a: 1}
+  m_Color: {r: 1, g: 0.87818646, b: 0.5058824, a: 1}
   m_Intensity: 1
   m_Range: 10
   m_SpotAngle: 30
@@ -1067,13 +1067,13 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1951694114}
-  m_LocalRotation: {x: -0.9650065, y: 0.0112895835, z: -0.04213329, w: -0.25857276}
+  m_LocalRotation: {x: -0.9961947, y: 0, z: 0.08715578, w: -0}
   m_LocalPosition: {x: 0, y: 3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children: []
   m_Father: {fileID: 0}
   m_RootOrder: 1
-  m_LocalEulerAnglesHint: {x: 150, y: 355, z: 0}
+  m_LocalEulerAnglesHint: {x: 180, y: 370, z: 0}
 --- !u!1001 &1980797817
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1331,7 +1331,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: d946902ef37d6dd47ac60a00b058efc6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RotateAngle: 15
+  RotateAngle: 5
 --- !u!4 &2083057805
 Transform:
   m_ObjectHideFlags: 0
@@ -1339,7 +1339,7 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 2083057803}
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalRotation: {x: 0, y: 0.38268343, z: 0, w: 0.92387956}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_Children:
@@ -1347,7 +1347,7 @@ Transform:
   - {fileID: 5747202440482576778}
   m_Father: {fileID: 0}
   m_RootOrder: 2
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: 0, y: 45, z: 0}
 --- !u!114 &2083057806
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -1360,7 +1360,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: fd3804afeba8bc748a4d88ae0c25efa6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  _data: {fileID: 11400000, guid: 0e5f48100f4d7a049a78cca50e1fac0b, type: 2}
+  _data: {fileID: 11400000, guid: c9a8f271a38b3f645aa1680f921b07f9, type: 2}
   ParticleToTexShader: {fileID: 7200000, guid: 585b6690cd2281940a62c4f55ba7306e, type: 3}
   waveMesh: {fileID: 3061514661345532850}
   edgeMesh: {fileID: 6969189549680565384}
@@ -1623,7 +1623,7 @@ MeshRenderer:
   m_RenderingLayerMask: 1
   m_RendererPriority: 0
   m_Materials:
-  - {fileID: 2100000, guid: 11c9edcdc1b18a2478c061fd8ba90d9b, type: 2}
+  - {fileID: 2100000, guid: c3e0d64968e97d845a8e0989c205e22d, type: 2}
   m_StaticBatchInfo:
     firstSubMesh: 0
     subMeshCount: 0
