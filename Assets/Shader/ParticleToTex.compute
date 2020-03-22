@@ -1,5 +1,7 @@
 ﻿// Each #kernel tells which function to compile; you can have many kernels
-#pragma kernel CSMain
+#pragma kernel CalculateHeightMap
+#pragma kernel CalculateNormalMap
+#pragma kernel CalculateTool
 
 struct ParticleInfo
 {
@@ -11,24 +13,34 @@ struct ParticleInfo
 
 // Create a RenderTexture with enableRandomWrite flag and set it
 // with cs.SetTexture
-RWTexture2D<float4> Result;
+RWTexture2D<float4> TexRead;
+RWTexture2D<float4> TexReadSec;
+RWTexture2D<float4> TexWrite;
 RWStructuredBuffer<ParticleInfo> ParticleInfos;
 
 int _Resolution;
 int _ParticleCount;
 float4 _Range;
+float4 _ResRange; // 1.0 / resolution * _Range.xy
+
+float _InfectRadiusFallOff;
+float _InfectDistanceFallOff;
+
+#define THREAD_NUM 8
 
 #include "UnityCG.cginc"
-#include "WaveLib.cginc"
+#include "WaveSurface.cginc"
+
+
 
 float3 IDtoPos(uint3 id )
 {
-    return float3( id.x * 1.0 / _Resolution * _Range.x * 2.0 - _Range.x , 0 ,
-    id.y * 1.0 / _Resolution * _Range.y * 2.0 - _Range.y);
+    return float3( id.x * _ResRange.x * 2.0 - _Range.x , 0 ,
+    id.y * _ResRange.y * 2.0 - _Range.y);
 }
 
-[numthreads(8,8,1)]
-void CSMain (uint3 id : SV_DispatchThreadID)
+[numthreads(THREAD_NUM,THREAD_NUM,1)]
+void CalculateHeightMap (uint3 id : SV_DispatchThreadID)
 {
     float3 vertexPos = IDtoPos(id);
     
@@ -50,10 +62,121 @@ void CSMain (uint3 id : SV_DispatchThreadID)
          offsetXZ += off;
     }
 
-  
-    Result[id.xy] = float4( height , offsetXZ.x , offsetXZ.y , 0 );
+    TexWrite[id.xy] = float4( height , offsetXZ.x , offsetXZ.y , 0 );
+}
 
-    // TODO: insert actual code here!
 
-//    Result[id.xy] = float4(id.x & id.y, (id.x & 15)/15.0, (id.y & 15)/15.0, 0.0);
+
+[numthreads(THREAD_NUM,THREAD_NUM,1)]
+void CalculateNormalMap (uint3 id : SV_DispatchThreadID)
+{
+    float3 pos = IDtoPos(id);
+    float3 off = TexRead[id.xy];
+    pos.xz += off.yz;
+    pos.y = off.x;
+    
+    int offsetU[4] = {1,0,-1,0};
+    int offsetV[4] = {0,1,0,-1};
+    float3 neighPos[4];
+    float3 normals[4];
+    uint i = 0;
+
+    for ( i = 0 ; i < 4 ; ++ i )
+    {
+        uint3 temID = ( id + uint3(offsetU[i],offsetV[i],0)) % _Resolution;
+        neighPos[i] = IDtoPos(temID);
+        float4 offset = TexRead[temID.xy];
+        neighPos[i].xz += offset.yz;
+        neighPos[i].y = offset.x;
+    }
+
+    for ( i = 0 ; i < 4 ; ++ i )
+    {
+        float3 neiPos1 = neighPos[i];
+        float3 neiPos2 = neighPos[(i+1)%4];
+
+        normals[i] = normalize(cross(normalize(neiPos1-pos),normalize(pos-neiPos2) ));
+        //normals[i] = normalize(neiPos1-pos); 
+    }
+
+    float3 normal = float3(0,0,0);
+
+    for ( i = 0 ; i < 4 ;++ i)
+    {
+        normal += normals[i];
+    }
+
+    TexWrite[id.xy] = float4( normalize(normal) , 0 );
+}
+
+
+float GetCurve(float3 pos1 , float3 pos2 , float3 n1 , float3 n2)
+{
+    return dot( n2 - n1 , pos2 - pos1 ) / length(pos2-pos1);
+}
+
+[numthreads(THREAD_NUM,THREAD_NUM,1)]
+void CalculateTool (uint3 id : SV_DispatchThreadID)
+{
+    float3 pos = IDtoPos(id);
+    float3 off = TexRead[id.xy];
+    pos.xz += off.yz;
+    pos.y = off.x;
+    float3 normal = TexReadSec[id.xy];
+    
+    int offsetU[4] = {1,0,-1,0};
+    int offsetV[4] = {0,1,0,-1};
+    float3 neighPos[4];
+    float3 normals[4];
+    float curve=0;
+    float InfectValue = 0;
+    
+    
+#if USE_SSS
+    uint i = 0;
+
+    for ( i = 0 ; i < 4 ; ++ i )
+    {
+        uint3 temID = ( id + uint3(offsetU[i],offsetV[i],0)) % _Resolution;
+        neighPos[i] = IDtoPos(temID);
+        float4 offset = TexRead[temID.xy];
+        neighPos[i].xz += offset.yz;
+        neighPos[i].y = offset.x;
+    }
+    
+    for ( i = 0 ; i < 4 ; ++ i )
+    {
+        uint3 temID = ( id + uint3(offsetU[i],offsetV[i],0)) % _Resolution;
+        normals[i] = TexReadSec[temID.xy];
+    }
+    
+    for ( i = 0 ; i < 4 ;++ i)
+    {
+        float c = GetCurve(neighPos[i],pos,normals[i],normal);
+
+        curve += c * c;
+    }
+
+    curve = sqrt(curve / 4);
+
+     
+    for( int i = 0 ; i < _ParticleCount; ++ i )
+    {
+         float3 ppos = ParticleInfos[i].pos;
+         float radius = ParticleInfos[i].radius;
+         float heightAmplitude = ParticleInfos[i].height;
+         float dxdz = ParticleInfos[i].dxdz;
+         
+        float offsetX = GetOffset( ppos.x , pos.x , _Range.x );
+        float offsetZ = GetOffset( ppos.z , pos.z , _Range.y );
+            
+        float length = sqrt( offsetX * offsetX + offsetZ * offsetZ );
+
+        float value = pow( max( 0 , 1 - length / radius  ) , _InfectDistanceFallOff ) * pow( radius , _InfectRadiusFallOff );
+
+        InfectValue += value;
+    }
+#endif
+
+    TexWrite[id.xy] = float4( curve * 10, InfectValue * 0.01, 0 , 0 );
 }

@@ -59,29 +59,52 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _SkyCube:
+        m_Texture: {fileID: 8900000, guid: 22f0efbf93ea81b49bce3ac5f1488041, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     m_Floats:
+    - _AmbientBottom: -6.76
+    - _AmbientExtinction: -0.15
+    - _AmbientIntensity: 0.3
+    - _AmbientTop: 10
     - _BumpScale: 1
     - _Cutoff: 0.5
     - _DetailNormalMapScale: 1
+    - _DirSpecIntensity: 12
     - _DstBlend: 0
     - _DxDz: 1
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
     - _Height: 1
+    - _IOR: 1.5
     - _Metallic: 0
+    - _Metalness: 0
     - _Mode: 0
     - _OcclusionStrength: 1
     - _Parallax: 0.02
     - _Radius: 2
+    - _Roughness: 0.109
+    - _SSSColor: 1
+    - _SSSIntensity: 0.15
+    - _SkySpecularIntensity: 3
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
+    - _SpecularIntensity: 6.6
     - _Speed: 2
     - _SrcBlend: 1
-    - _TessFactor: 9
+    - _SubSurfaceSunDistort: 0.05
+    - _SubSurfaceSunFallOff: 1.91
+    - _TessFactor: 25
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
+    - _Albedo: {r: 0, g: 0.6424892, b: 0.6886792, a: 1}
+    - _AmbientOceanLight: {r: 1, g: 0.7015924, b: 0.30588233, a: 1}
+    - _AmbientSkyLight: {r: 1, g: 0.5900908, b: 0.30588233, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _Range: {r: 5, g: 5, b: 0, a: 0}
+    - _Range: {r: 5, g: 5, b: 0.2, a: 0.2}
+    - _SSSColor: {r: 1, g: 0.84957355, b: 0.5424528, a: 1}
+    - _Specular: {r: 1, g: 0.6189234, b: 0.10849059, a: 1}
