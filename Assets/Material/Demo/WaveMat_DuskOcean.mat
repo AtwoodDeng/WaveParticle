@@ -33,7 +33,7 @@ Material:
         m_Offset: {x: 0, y: 0}
     - _DetailNormal:
         m_Texture: {fileID: 2800000, guid: 681f5c336a57f914faa3b7f1eb640c2e, type: 3}
-        m_Scale: {x: 1, y: 1}
+        m_Scale: {x: 1, y: 2}
         m_Offset: {x: 0, y: 0}
     - _DetailNormalMap:
         m_Texture: {fileID: 0}
@@ -46,6 +46,14 @@ Material:
     - _FlowMap:
         m_Texture: {fileID: 2800000, guid: d8c3ac8982c34074d83e0dffcac1afbc, type: 3}
         m_Scale: {x: 8, y: 8}
+        m_Offset: {x: 0, y: 0}
+    - _FoamFlowMap:
+        m_Texture: {fileID: 2800000, guid: ec771ebd358542c41a44d6f9bde8e914, type: 3}
+        m_Scale: {x: 4, y: 4}
+        m_Offset: {x: 0, y: 0}
+    - _FoamMap:
+        m_Texture: {fileID: 2800000, guid: 45a935c30ddebf942a19d238d0e1dac6, type: 3}
+        m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _HeightMap:
         m_Texture: {fileID: 0}
@@ -74,19 +82,28 @@ Material:
     m_Floats:
     - _AmbientBottom: -6.76
     - _AmbientExtinction: -0.15
-    - _AmbientIntensity: 1.2
+    - _AmbientIntensity: 1.81
     - _AmbientTop: 9.15
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _DetailFlowIntensity: 0.143
     - _DetailFlowmapOffset: 0.05
-    - _DetailFlowmapSpeed: 1
-    - _DetailFlowmapTiling: 0.47
+    - _DetailFlowmapSpeed: 0.5
+    - _DetailFlowmapTiling: 2
     - _DetailFlowmapTilling: 2
-    - _DetailNormalIntensity: 0.256
+    - _DetailNormalIntensity: 0.329
     - _DetailNormalMapScale: 1
-    - _DirSpecIntensity: 1.5
+    - _DirSpecIntensity: 8
     - _DstBlend: 0
     - _DxDz: 1
+    - _FoamAlphaCut: 0.63
+    - _FoamFlowIntensity: 0.06
+    - _FoamFlowmapSpeed: 0.2
+    - _FoamFlowmapTiling: 1
+    - _FoamH0: 0.3
+    - _FoamHmax: 1
+    - _FoamIntensity: 1.84
+    - _FoamThreshold_J: 0.23
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1
@@ -102,21 +119,21 @@ Material:
     - _Roughness: 0.22
     - _SSSColor: 1
     - _SSSIntensity: 0.36
-    - _SkySpecularIntensity: 1.8
+    - _SkySpecularIntensity: 1.5
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SpecularIntensity: 6.6
     - _Speed: 2
     - _SrcBlend: 1
-    - _SubSurfaceSunDistort: 0.216
+    - _SubSurfaceSunDistort: 0.192
     - _SubSurfaceSunFallOff: 2.08
     - _TessFactor: 25
     - _UVSec: 0
     - _ZWrite: 1
     m_Colors:
     - _Albedo: {r: 0, g: 0.6424892, b: 0.6886792, a: 1}
-    - _AmbientOceanLight: {r: 0.0754717, g: 0.031683873, b: 0.049199007, a: 1}
-    - _AmbientSkyLight: {r: 0.50980395, g: 0.31146967, b: 0.20784312, a: 1}
+    - _AmbientOceanLight: {r: 0.066037714, g: 0.018, b: 0.049061038, a: 1}
+    - _AmbientSkyLight: {r: 0.38679248, g: 0.1726543, b: 0.12224101, a: 1}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _DetailFlowmapJump: {r: 0.19, g: 0.16, b: 0, a: 0}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}

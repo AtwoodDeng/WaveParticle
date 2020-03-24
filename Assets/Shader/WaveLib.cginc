@@ -15,6 +15,9 @@ sampler2D _DetailNormal;
 float4 _DetailNormal_ST;
 sampler2D _FlowMap;
 float4 _FlowMap_ST;
+sampler2D _FoamMap;
+sampler2D _FoamFlowMap;
+float4 _FoamFlowMap_ST;
 
 float _TessFactor;
 float4 _Albedo;
@@ -64,3 +67,4 @@ float2 objPosToMapUV(float3 objPos)
 #include "WaveAmbient.cginc"
 #include "WaveSSS.cginc"
 #include "WaveDetail.cginc"
+#include "WaveFoam.cginc"

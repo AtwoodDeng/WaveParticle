@@ -845,7 +845,7 @@ Camera:
   m_GameObject: {fileID: 1634307844}
   m_Enabled: 1
   serializedVersion: 2
-  m_ClearFlags: 2
+  m_ClearFlags: 1
   m_BackGroundColor: {r: 0.13207549, g: 0.13207549, b: 0.13207549, a: 0}
   m_projectionMatrixMode: 1
   m_GateFitMode: 2
@@ -1364,8 +1364,8 @@ MonoBehaviour:
   ParticleToTexShader: {fileID: 7200000, guid: 585b6690cd2281940a62c4f55ba7306e, type: 3}
   waveMesh: {fileID: 3061514661345532850}
   edgeMesh: {fileID: 6969189549680565384}
-  heightMap: {fileID: 0}
-  normalMap: {fileID: 0}
+  heightMap: []
+  normalMap: []
   toolMap: {fileID: 0}
 --- !u!1001 &1110007473269196200
 PrefabInstance:

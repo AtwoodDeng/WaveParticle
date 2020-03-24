@@ -17,23 +17,23 @@ MonoBehaviour:
   texResolution: 1024
   packets:
   - particleCount: 400
-    noiseSpeed: 0.3
+    noiseSpeed: 0.5
     speedRandom: 1
-    radius: 0.45
-    radiusRandom: 0.258
-    height: 0.015
+    radius: 0.8
+    radiusRandom: 0.457
+    height: 0.02
     heightRandom: 0.788
-    dxdz: 0.39
-    dxdzRandom: 0.369
-  - particleCount: 80
+    dxdz: 1
+    dxdzRandom: 0.647
+  - particleCount: 50
     noiseSpeed: 0.33
     speedRandom: 0.767
     radius: 1.2
-    radiusRandom: 0.4
-    height: 0.05
-    heightRandom: 0.4
-    dxdz: 1
-    dxdzRandom: 0.33
+    radiusRandom: 0.747
+    height: 0.04
+    heightRandom: 0.077
+    dxdz: 0.42
+    dxdzRandom: 0.402
   - particleCount: 12
     noiseSpeed: 0.15
     speedRandom: 0
@@ -48,3 +48,10 @@ MonoBehaviour:
   skybox: {fileID: 8900000, guid: 22f0efbf93ea81b49bce3ac5f1488041, type: 3}
   waveMaterial: {fileID: 2100000, guid: c3e0d64968e97d845a8e0989c205e22d, type: 2}
   edgeMaterial: {fileID: 2100000, guid: 6742aa8ca6c0d2445a4e84ec2186db02, type: 2}
+  UseDetail: 0
+  detailFlowmapTiling: 0.66
+  detailFlowmapSpeed: 1
+  detailFlowmapJump: {x: 0.25, y: 0.25, z: 0, w: 0}
+  detailFlowmapOffset: 0.05
+  detailNormalMap: {fileID: 2800000, guid: 681f5c336a57f914faa3b7f1eb640c2e, type: 3}
+  flowMap: {fileID: 2800000, guid: d8c3ac8982c34074d83e0dffcac1afbc, type: 3}

@@ -47,6 +47,14 @@ Material:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
+    - _FoamFlowMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _FoamMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
     - _HeightMap:
         m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
@@ -78,6 +86,7 @@ Material:
     - _AmbientTop: 9
     - _BumpScale: 1
     - _Cutoff: 0.5
+    - _DetailFlowIntensity: 1
     - _DetailFlowmapOffset: 1
     - _DetailFlowmapSpeed: 1
     - _DetailFlowmapTiling: 1
@@ -87,6 +96,14 @@ Material:
     - _DirSpecIntensity: 1.5
     - _DstBlend: 0
     - _DxDz: 1
+    - _FoamAlphaCut: 0.5
+    - _FoamFlowIntensity: 1
+    - _FoamFlowmapSpeed: 1
+    - _FoamFlowmapTiling: 1
+    - _FoamH0: 1
+    - _FoamHmax: 1
+    - _FoamIntensity: 1
+    - _FoamThreshold_J: 0.2
     - _GlossMapScale: 1
     - _Glossiness: 0.5
     - _GlossyReflections: 1

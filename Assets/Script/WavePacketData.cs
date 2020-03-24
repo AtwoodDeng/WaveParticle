@@ -38,6 +38,15 @@ public class WavePacketData : ScriptableObject
     public Material edgeMaterial;
 
 
+    [Header("Detail")] 
+    public bool UseDetail = false;
+    public float detailFlowmapTiling = 0.5f;
+    public float detailFlowmapSpeed = 1.0f;
+    public Vector4 detailFlowmapJump = new Vector4(0.25f, 0.25f, 0, 0);
+    public float detailFlowmapOffset = 0.0f;
+    public Texture detailNormalMap;
+    public Texture flowMap;
+
     public int GetParticleCount()
     {
         int count = 0;

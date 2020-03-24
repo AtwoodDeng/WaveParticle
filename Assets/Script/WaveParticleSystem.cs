@@ -46,20 +46,34 @@ public class WaveParticleSystem : MonoBehaviour
         get { return data.packets;  }
     }
 
+    
+
     public ComputeShader ParticleToTexShader;
 
     public MeshRenderer waveMesh;
     public MeshRenderer edgeMesh;
     //public Material[] waveMaterials;
 
+
     [Header("ReadOnly")]
-    public RenderTexture heightMap;
-    public RenderTexture normalMap;
+    public RenderTexture[] heightMap;
+    public RenderTexture[] normalMap;
     public RenderTexture toolMap;
     private int calculateHeightHandle;
     private int calculateNormalHandle;
     private int calculateToolHandle;
+    private int calculateDetailHeightHandle;
     private ComputeBuffer particleBuffer;
+
+    private const int READ = 0;
+    private const int WRITE = 1;
+
+    public void SwitchMap(RenderTexture[] textures)
+    {
+        var tem = textures[0];
+        textures[0] = textures[1];
+        textures[1] = tem;
+    }
 
     public struct ParticleInfo
     {
@@ -74,15 +88,27 @@ public class WaveParticleSystem : MonoBehaviour
     private float[] particleNoiseSpeed;
     private ParticleInfo[] particleInfos;
 
-    private int TexWriteID = Shader.PropertyToID("TexWrite");
-    private int TexReadID = Shader.PropertyToID("TexRead");
-    private int TexReadSecID = Shader.PropertyToID("TexReadSec");
+    private int HeightMapCSID = Shader.PropertyToID("HeightMap");
+    private int NormalMapCSID = Shader.PropertyToID("NormalMap");
+    private int ToolMapCSID = Shader.PropertyToID("ToolMap");
+    private int OutputMapID = Shader.PropertyToID("OutputMap");
+    private int OutputMap2ID = Shader.PropertyToID("OutputMap2");
     private int ResolutionID = Shader.PropertyToID("_Resolution");
     private int ParticleCountID = Shader.PropertyToID("_ParticleCount");
     private int RangeID = Shader.PropertyToID("_Range");
     private int ResRangeID = Shader.PropertyToID("_ResRange");
     private int InfectRadiusFallOffID = Shader.PropertyToID("_InfectRadiusFallOff");
     private int InfectDistanceFallOffID = Shader.PropertyToID("_InfectDistanceFallOff");
+    private int DetailFlowmapTilingID = Shader.PropertyToID("_DetailFlowmapTiling");
+    private int DetailFlowmapSpeedID = Shader.PropertyToID("_DetailFlowmapSpeed");
+    private int DetailFlowmapJumpID = Shader.PropertyToID("_DetailFlowmapJump");
+    private int DetailFlowmapOffsetID = Shader.PropertyToID("_DetailFlowmapOffset");
+    private int DetailNormalID = Shader.PropertyToID("DetailNormalMap");
+    private int FlowMapID = Shader.PropertyToID("FlowMap");
+    private int FlowMapSizeID = Shader.PropertyToID("_FlowMapSize");
+    private int TimeID = Shader.PropertyToID("_Time");
+
+
     //private int SpeedID = Shader.PropertyToID("_Speed");
     //private int RadiusID = Shader.PropertyToID("_Radius");
     //private int HeightID = Shader.PropertyToID("_Height");
@@ -100,18 +126,30 @@ public class WaveParticleSystem : MonoBehaviour
     }
     public void SetupRT()
     {
-        // heightMap = RenderTexture.GetTemporary(texResolution, texResolution,0,RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
-        heightMap = new RenderTexture(texResolution, texResolution, 0, RenderTextureFormat.ARGBFloat);
-        heightMap.enableRandomWrite = true;
-        heightMap.filterMode = FilterMode.Bilinear;
-        heightMap.wrapMode = TextureWrapMode.Repeat;
-        heightMap.Create();
+        heightMap = new RenderTexture[2];
 
-        normalMap = new RenderTexture(texResolution, texResolution, 0, RenderTextureFormat.ARGBFloat);
-        normalMap.enableRandomWrite = true;
-        normalMap.filterMode = FilterMode.Bilinear;
-        normalMap.wrapMode = TextureWrapMode.Repeat;
-        normalMap.Create();
+        for (int i = 0; i < 2; ++i)
+        {
+            // heightMap = RenderTexture.GetTemporary(texResolution, texResolution,0,RenderTextureFormat.ARGBFloat, RenderTextureReadWrite.Linear);
+            var rt = new RenderTexture(texResolution, texResolution, 0, RenderTextureFormat.ARGBFloat);
+            rt.enableRandomWrite = true;
+            rt.filterMode = FilterMode.Bilinear;
+            rt.wrapMode = TextureWrapMode.Repeat;
+            rt.Create();
+            heightMap[i] = rt;
+        }
+
+        normalMap = new RenderTexture[2];
+        for (int i = 0; i < 2; ++i)
+        {
+            var rt = new RenderTexture(texResolution, texResolution, 0, RenderTextureFormat.ARGBFloat);
+            rt.enableRandomWrite = true;
+            rt.filterMode = FilterMode.Bilinear;
+            rt.wrapMode = TextureWrapMode.Repeat;
+            rt.Create();
+
+            normalMap[i] = rt;
+        }
 
         toolMap = new RenderTexture(texResolution, texResolution, 0, RenderTextureFormat.ARGBFloat);
         toolMap.enableRandomWrite = true;
@@ -126,6 +164,7 @@ public class WaveParticleSystem : MonoBehaviour
         calculateHeightHandle = ParticleToTexShader.FindKernel("CalculateHeightMap");
         calculateNormalHandle = ParticleToTexShader.FindKernel("CalculateNormalMap");
         calculateToolHandle = ParticleToTexShader.FindKernel("CalculateTool");
+        calculateDetailHeightHandle = ParticleToTexShader.FindKernel("CalculateDetailHeight");
     }
 
     public int GetParticleCount()
@@ -146,9 +185,7 @@ public class WaveParticleSystem : MonoBehaviour
         {
             particlePositions[i] = new Vector3( Random.Range(-range,range) , 0 , Random.Range(-range, range));
             particleVelocities[i] = new Vector3(Random.Range(-1f,1f),0,Random.Range(-1f,1f)).normalized ;
-
         }
-
 
         particleBuffer = new ComputeBuffer(particleCount, 24);
     }
@@ -161,7 +198,6 @@ public class WaveParticleSystem : MonoBehaviour
         {
             SetupParticles();
         }
-
 
         int index = 0;
 
@@ -198,28 +234,59 @@ public class WaveParticleSystem : MonoBehaviour
     {
         int particleCount = GetParticleCount();
 
-        ParticleToTexShader.SetTexture(calculateHeightHandle, TexWriteID, heightMap);
+
+        //************ Height Map *************************
         ParticleToTexShader.SetInt(ResolutionID, texResolution);
         ParticleToTexShader.SetInt(ParticleCountID, particleCount); 
-        ParticleToTexShader.SetVector(RangeID, new Vector4(range,range,0,0));
-        ParticleToTexShader.SetVector(ResRangeID, new Vector4(1.0f / texResolution * range , 1.0f / texResolution * range));
-
+        ParticleToTexShader.SetVector(RangeID, new Vector4(range,range,1f / range ,1f / range));
+        ParticleToTexShader.SetVector(ResRangeID, new Vector4(1.0f / texResolution * range , 1.0f / texResolution * range , 1.0f / texResolution, 1.0f/texResolution));
         particleBuffer.SetData(particleInfos);
-
         ParticleToTexShader.SetBuffer(calculateHeightHandle, ParticleInfosBufferID, particleBuffer);
-
+        ParticleToTexShader.SetTexture(calculateHeightHandle, HeightMapCSID, heightMap[WRITE]);
         ParticleToTexShader.Dispatch(calculateHeightHandle, texResolution / 8, texResolution / 8,1);
+        SwitchMap(heightMap);
 
-        ParticleToTexShader.SetTexture( calculateNormalHandle , TexReadID , heightMap);
-        ParticleToTexShader.SetTexture(calculateNormalHandle, TexWriteID, normalMap);
+        //************ Normal Map *************************
+        ParticleToTexShader.SetTexture( calculateNormalHandle , HeightMapCSID , heightMap[READ]);
+        ParticleToTexShader.SetTexture(calculateNormalHandle, NormalMapCSID, normalMap[WRITE]);
         ParticleToTexShader.Dispatch(calculateNormalHandle, texResolution / 8, texResolution / 8, 1);
-        
+        SwitchMap(normalMap);
+
+        //************ Detail Height Map *************************
+        if (data.UseDetail)
+        {
+            ParticleToTexShader.SetFloat(DetailFlowmapTilingID, data.detailFlowmapTiling);
+            ParticleToTexShader.SetFloat(DetailFlowmapSpeedID, data.detailFlowmapSpeed);
+            ParticleToTexShader.SetVector(DetailFlowmapJumpID, data.detailFlowmapJump);
+            ParticleToTexShader.SetFloat(DetailFlowmapOffsetID, data.detailFlowmapOffset);
+            ParticleToTexShader.SetVector(FlowMapSizeID,
+                new Vector4(data.flowMap.width, data.flowMap.height, 1f / data.flowMap.width,
+                    1f / data.flowMap.height));
+            ParticleToTexShader.SetVector(TimeID, new Vector4(Time.time * 20f , Time.time,0,0));
+
+
+            ParticleToTexShader.SetTexture(calculateDetailHeightHandle, HeightMapCSID, heightMap[READ]);
+            ParticleToTexShader.SetTexture(calculateDetailHeightHandle, NormalMapCSID, normalMap[READ]);
+            ParticleToTexShader.SetTexture(calculateDetailHeightHandle, DetailNormalID, data.detailNormalMap);
+            ParticleToTexShader.SetTexture(calculateDetailHeightHandle, FlowMapID, data.flowMap);
+
+            ParticleToTexShader.SetTexture(calculateDetailHeightHandle, OutputMapID, heightMap[WRITE]);
+            ParticleToTexShader.SetTexture(calculateDetailHeightHandle, OutputMap2ID, normalMap[WRITE]);
+
+            ParticleToTexShader.Dispatch(calculateDetailHeightHandle, texResolution / 8, texResolution / 8, 1);
+
+            SwitchMap(heightMap);
+            SwitchMap(normalMap);
+        }
+
+
+        //************ Tool Map *************************
         ParticleToTexShader.SetFloat(InfectDistanceFallOffID, infectDistanceFalloff );
         ParticleToTexShader.SetFloat(InfectRadiusFallOffID, infectRadiusFalloff);
         ParticleToTexShader.SetBuffer(calculateToolHandle, ParticleInfosBufferID, particleBuffer);
-        ParticleToTexShader.SetTexture(calculateToolHandle, TexReadID, heightMap);
-        ParticleToTexShader.SetTexture(calculateToolHandle, TexReadSecID, normalMap);
-        ParticleToTexShader.SetTexture(calculateToolHandle, TexWriteID, toolMap);
+        ParticleToTexShader.SetTexture(calculateToolHandle, HeightMapCSID, heightMap[READ]);
+        ParticleToTexShader.SetTexture(calculateToolHandle, NormalMapCSID, normalMap[READ]);
+        ParticleToTexShader.SetTexture(calculateToolHandle, ToolMapCSID, toolMap);
         ParticleToTexShader.Dispatch(calculateToolHandle, texResolution / 8, texResolution / 8, 1);
          
     }
@@ -230,8 +297,8 @@ public class WaveParticleSystem : MonoBehaviour
 
         foreach( var mat in mats )
         {
-            mat.SetTexture(HeightMapID, heightMap);
-            mat.SetTexture(NormalMapID, normalMap);
+            mat.SetTexture(HeightMapID, heightMap[READ]);
+            mat.SetTexture(NormalMapID, normalMap[READ]);
             mat.SetTexture(ToolMapID, toolMap);
             mat.SetVector(RangeID, new Vector4(range, range, 1f / (range), 1f / (range)));
             mat.SetTexture(SkyCubeID, data.skybox);
@@ -243,11 +310,25 @@ public class WaveParticleSystem : MonoBehaviour
         if ( particleBuffer != null )
             particleBuffer.Release();
 
-        if ( heightMap != null )
-            heightMap.Release();
+        if (heightMap != null)
+        {
+            foreach (var rt in heightMap)
+            {
+                rt.Release();
+            }
 
-        if (normalMap!= null)
-            normalMap.Release();
+            heightMap = null;
+        }
+
+        if (normalMap != null)
+        {
+            foreach (var rt in normalMap)
+            {
+                rt.Release();
+            }
+
+            normalMap = null;
+        }
 
         if (toolMap != null)
             toolMap.Release();

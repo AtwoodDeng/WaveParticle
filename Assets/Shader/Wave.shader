@@ -32,10 +32,23 @@
         _DetailNormal("Detail Normal", 2D) = "white" {}
         _FlowMap("Flow Map", 2D) = "white" {}
         _DetailNormalIntensity("Detail Normal Intensity", range(0,2)) = 1.0
+        _DetailFlowIntensity("Detail Flow Intensity", range(0,2)) = 1.0
         _DetailFlowmapTiling("Detail Normal Tiling", float) = 1.0
         _DetailFlowmapOffset("Detail Normal Offset", float) = 0.0
         _DetailFlowmapSpeed("Detail Normal Speed", float) = 1.0
         _DetailFlowmapJump("Detail Normal Jump", vector) = (0.25,0.25,0,0)
+
+        [Header(Foam)]
+        _FoamMap("Foam Map", 2D) = "white" {}
+        _FoamFlowMap("Foam Flow Map", 2D) = "white" {}
+        _FoamIntensity("Foam Intensity", float ) = 1.0
+        _FoamFlowIntensity("Foam Flow Intensity", float ) = 1.0
+        _FoamH0("Foam H0", float ) = 1.0
+        _FoamHmax("Foam Hmax", float ) = 1.0
+        _FoamThreshold_J("Foam J", float ) = 1.0
+        _FoamFlowmapSpeed("Foam Flow Speed", float ) = 1.0
+        _FoamFlowmapTiling("Foam Flow Tiling", float ) = 1.0
+        _FoamAlphaCut("Foam Alpha Cut", float ) = 0.5
 
         [Toggle]_IsEdge("Is Edge" , float )=0
 
@@ -159,10 +172,12 @@
               v.normal = normal;
 
               normal.xyz = float3(0,1,0);
+              
               float3 detailNormal = DetailNormal(uv,normal,v.tangent) * _DetailNormalIntensity;
               detailNormal = (_IsEdge > 0 && v.vertex.y < 0 ) ? float3(0,0,0) : detailNormal;
               v.normal = normalize(v.normal + detailNormal );
-              v.vertex.xyz += detailNormal * 0.1; 
+              v.vertex.xyz += detailNormal * 0.02; 
+              
 
               v.texcoord = vi[0].texcoord*bary.x + vi[1].texcoord*bary.y + vi[2].texcoord*bary.z;
               
@@ -202,8 +217,11 @@
 
                 float3 waveCol = specularSun + specularSky + ambientColor + subsurfaceScattering;
 
+                float4 foam = Foam(data);
+
+                waveCol = lerp( waveCol , foam.xyz , foam.a);
                 
-                return fixed4(waveCol,1.0);
+                return fixed4(waveCol ,1.0);
 
                 // return tex2Dlod(_HeightMap,float4(i.objPos.xz*0.1-0.5,0,0));
                 //return fixed4(1,1,1,1) * (i.objPos.y - 1) * 0.4;
